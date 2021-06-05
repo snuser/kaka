@@ -12,7 +12,7 @@ type FilterInvoker struct {
 }
 type Filter func(inv *Invocation)
 
-func (f *FilterInvoker) Invoke(inv *Invocation) ([]byte, error) {
+func (f *FilterInvoker) Invoke(inv *Invocation) (output *Output) {
 	for _, flt := range f.Filter {
 		flt(inv)
 	}

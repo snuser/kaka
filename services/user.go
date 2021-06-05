@@ -1,5 +1,13 @@
 package services
-type UserService struct{
+
+import (
+	"errors"
+	"kaka/dao"
+	"kaka/model"
+)
+
+type UserService struct {
+	Service
 }
 
 func (UserService) ServiceName() string {
@@ -10,7 +18,19 @@ func (UserService) ShutDown() string {
 	return "shutdown userService"
 }
 
-func (UserService) GetUser(input *Input) (*Output, error) {
-	return &Output{Msg: "getUser called"}, nil
+type GetUserInput struct {
+	Id int
 }
 
+func (UserService) GetUser(input *GetUserInput) (*model.User, error) {
+	id := input.Id
+	user, err := dao.GetUserDao().GetUserById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if user.IsEmpty() {
+		return user, errors.New("user empty")
+	}
+	return user, nil
+}

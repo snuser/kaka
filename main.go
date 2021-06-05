@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"kaka/invoker"
@@ -30,13 +31,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		Invoker: invoker.HttpInvoker{},
 		Filter:  []invoker.Filter{invoker.LogFilter},
 	}
-	resp, err := filterInvoker.Invoke(inv)
-	if err != nil {
-		fmt.Fprintf(w, "%s", fmt.Sprintf("%+v\n", err))
-		return
-		//fmt.Printf("%+v\n", errors.Cause(err))
-	}
-	fmt.Fprintf(w, "%s", string(resp))
+	output := filterInvoker.Invoke(inv)
+	respData, _ := json.Marshal(output)
+	fmt.Fprintf(w, "%s", string(respData))
 }
 
 func forceShutdownIfNeed() {
@@ -65,12 +62,9 @@ func listenSignal() {
 }
 func main() {
 	services.AddServices(&services.UserService{})
-	services.AddServices(&services.HelloService{})
 	go func() {
 		listenSignal()
 	}()
-
 	http.HandleFunc("/", handler)
-
 	log.Fatal(http.ListenAndServe("0.0.0.0:8080", nil))
 }
