@@ -4,18 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"kaka/apps"
 	"kaka/invoker"
 	"kaka/services"
-	"log"
 	"net/http"
 	"os"
-	"os/signal"
 	"sync"
-	"syscall"
 	"time"
 )
-
-var FLock sync.Mutex
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	data, _ := ioutil.ReadAll(r.Body)
@@ -41,30 +37,44 @@ func forceShutdownIfNeed() {
 		os.Exit(1)
 	})
 }
-func shutdown() {
+
+func AppShutdown() {
+	fmt.Println("App shutdown start")
+	forceShutdownIfNeed()
+	ShutdownAppServices()
+	fmt.Println("shutdown done")
+}
+
+func ShutdownAppServices() {
+	var wg sync.WaitGroup
 	servicesList := services.GetServicesList()
+	wg.Add(len(servicesList))
 	for _, service := range servicesList {
+		s := service
 		go func() {
-			service.ShutDown()
+			defer wg.Done()
+			fmt.Println(s.ShutDown())
 		}()
 	}
+	wg.Wait()
 }
-func listenSignal() {
-	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGTSTP, syscall.SIGKILL)
-	select {
-	case <-signals:
-		fmt.Println("收到信号")
-		forceShutdownIfNeed()
-		shutdown()
-		os.Exit(0)
-	}
+
+func GetAppServer() (string, http.Handler, string, func()) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", handler)
+	return "0.0.0.0:8081", mux, "APP1", AppShutdown
 }
+
+func GetDebugServer() (string, http.Handler, string, func()) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", handler)
+	return "0.0.0.0:8082", mux, "Debug", AppShutdown
+}
+
 func main() {
 	services.AddServices(&services.UserService{})
-	go func() {
-		listenSignal()
-	}()
-	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe("0.0.0.0:8080", nil))
+	appManager := apps.NewAppManager()
+	appManager.Add(GetAppServer())
+	appManager.Add(GetDebugServer())
+	appManager.Start()
 }
