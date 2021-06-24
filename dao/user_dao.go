@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
-	"kaka/model"
+	"kaka/biz"
 	"sync"
 )
 var userDaoOnce sync.Once
@@ -26,8 +26,8 @@ func GetUserDao() *UserDao{
 //2. 返回空的User对象， 在User对象设置IsEmpty函数 用来判断是否为空数据
 //后面如何处理 调用方来决定
 
-func (ud *UserDao) GetUserById(id int) (*model.User, error) {
-	user := &model.User{}
+func (ud *UserDao) GetUserById(id int) (*biz.User, error) {
+	user := &biz.User{}
 	sqlStr := "select * from user where id = ?"
 	err := ud.DB.QueryRow(sqlStr, id).Scan(&user.Id, &user.UserName, &user.Email, &user.PasswdHash)
 	if err != nil {

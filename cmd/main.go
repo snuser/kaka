@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"kaka/apps"
-	"kaka/invoker"
+	"kaka/internal/pkg/invoker"
+	"kaka/internal/pkg/services_manage"
+	"kaka/pkg"
 	"kaka/services"
 	"net/http"
 	"os"
@@ -47,7 +48,7 @@ func AppShutdown() {
 
 func ShutdownAppServices() {
 	var wg sync.WaitGroup
-	servicesList := services.GetServicesList()
+	servicesList := services_manage.GetServicesList()
 	wg.Add(len(servicesList))
 	for _, service := range servicesList {
 		s := service
@@ -59,6 +60,7 @@ func ShutdownAppServices() {
 	wg.Wait()
 }
 
+// GetAppServer 返回地址, handler, APP的名字和卸载服务的回调函数
 func GetAppServer() (string, http.Handler, string, func()) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handler)
@@ -72,8 +74,8 @@ func GetDebugServer() (string, http.Handler, string, func()) {
 }
 
 func main() {
-	services.AddServices(&services.UserService{})
-	appManager := apps.NewAppManager()
+	services_manage.AddServices(&services.UserService{})
+	appManager := pkg.NewAppManager()
 	appManager.Add(GetAppServer())
 	appManager.Add(GetDebugServer())
 	appManager.Start()

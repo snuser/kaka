@@ -1,4 +1,4 @@
-package apps
+package pkg
 
 import (
 	"context"
@@ -94,7 +94,7 @@ func (am *AppManager) innerStart() error {
 	return nil
 }
 
-//停止所有的APP
+// Shutdown 停止所有的APP
 func (am *AppManager) Shutdown() error {
 	var swg sync.WaitGroup
 	swg.Add(len(am.Apps))

@@ -2,12 +2,13 @@ package services
 
 import (
 	"errors"
+	"kaka/biz"
 	"kaka/dao"
-	"kaka/model"
+	"kaka/internal/pkg/services_manage"
 )
 
 type UserService struct {
-	Service
+	services_manage.Service
 }
 
 func (UserService) ServiceName() string {
@@ -22,7 +23,7 @@ type GetUserInput struct {
 	Id int
 }
 
-func (UserService) GetUser(input *GetUserInput) (*model.User, error) {
+func (UserService) GetUser(input *GetUserInput) (*biz.User, error) {
 	id := input.Id
 	user, err := dao.GetUserDao().GetUserById(id)
 	if err != nil {
