@@ -3,7 +3,6 @@ package services
 import (
 	"errors"
 	"kaka/biz"
-	"kaka/dao"
 	"kaka/internal/pkg/services_manage"
 )
 
@@ -25,11 +24,7 @@ type GetUserInput struct {
 
 func (UserService) GetUser(input *GetUserInput) (*biz.User, error) {
 	id := input.Id
-	user, err := dao.GetUserDao().GetUserById(id)
-	if err != nil {
-		return nil, err
-	}
-
+	user := biz.GetUserById(id)
 	if user.IsEmpty() {
 		return user, errors.New("user empty")
 	}

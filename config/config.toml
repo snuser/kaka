@@ -1,0 +1,2 @@
+[mysql]
+uri = "root:123456@tcp(10.2.0.8:3306)/demo?charset=utf8mb4&parseTime=True&loc=Local&timeout=3s"

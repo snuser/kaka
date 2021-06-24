@@ -9,6 +9,22 @@ import (
 )
 var userDaoOnce sync.Once
 var userDao *UserDao
+
+type User struct {
+	Id         int
+	UserName   string
+	Email      string
+	PasswdHash string
+}
+
+func (u *User) ToBizUser() *biz.User {
+	return &biz.User{
+		Id:         u.Id,
+		UserName:   u.UserName,
+		Email:      u.Email,
+	}
+}
+
 type UserDao struct {
 	DB *sql.DB
 }
@@ -27,15 +43,15 @@ func GetUserDao() *UserDao{
 //后面如何处理 调用方来决定
 
 func (ud *UserDao) GetUserById(id int) (*biz.User, error) {
-	user := &biz.User{}
+	user := &User{}
 	sqlStr := "select * from user where id = ?"
 	err := ud.DB.QueryRow(sqlStr, id).Scan(&user.Id, &user.UserName, &user.Email, &user.PasswdHash)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return user, nil
+			return user.ToBizUser(), nil
 		}
 		return nil, errors.Wrap(err, "GetUserById error occurred")
 	}
-	return user, nil
+	return user.ToBizUser(), nil
 }
 
