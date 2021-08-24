@@ -1,0 +1,81 @@
+redis-benchmark  -d 5 -n 100 -c 10
+====== PING_INLINE ======
+  100 requests completed in 0.00 seconds
+  10 parallel clients
+  5 bytes payload
+  keep alive: 1
+
+100.00% <= 0 milliseconds
+33333.33 requests per second
+
+====== PING_BULK ======
+  100 requests completed in 0.00 seconds
+  10 parallel clients
+  5 bytes payload
+  keep alive: 1
+
+100.00% <= 0 milliseconds
+50000.00 requests per second
+
+====== SET ======
+  100 requests completed in 0.00 seconds
+  10 parallel clients
+  5 bytes payload
+  keep alive: 1
+
+100.00% <= 0 milliseconds
+50000.00 requests per second
+
+====== GET ======
+  100 requests completed in 0.00 seconds
+  10 parallel clients
+  5 bytes payload
+  keep alive: 1
+
+100.00% <= 0 milliseconds
+50000.00 requests per second
+
+====== INCR ======
+  100 requests completed in 0.00 seconds
+  10 parallel clients
+  5 bytes payload
+  keep alive: 1
+
+100.00% <= 0 milliseconds
+50000.00 requests per second
+
+====== LPUSH ======
+  100 requests completed in 0.00 seconds
+  10 parallel clients
+  5 bytes payload
+  keep alive: 1
+
+100.00% <= 0 milliseconds
+50000.00 requests per second
+
+====== RPUSH ======
+  100 requests completed in 0.00 seconds
+  10 parallel clients
+  5 bytes payload
+  keep alive: 1
+
+100.00% <= 0 milliseconds
+99999.99 requests per second
+
+====== LPOP ======
+  100 requests completed in 0.00 seconds
+  10 parallel clients
+  5 bytes payload
+  keep alive: 1
+
+100.00% <= 0 milliseconds
+50000.00 requests per second
+
+====== RPOP ======
+  100 requests completed in 0.00 seconds
+  10 parallel clients
+  5 bytes payload
+  keep alive: 1
+
+100.00% <= 0 milliseconds
+50000.00 requests per second
